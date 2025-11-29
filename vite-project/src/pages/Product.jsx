@@ -1,14 +1,13 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addToCart, removeFromCart, increaseQty, decreaseQty } from "../redux/CardSlice";
 import { FaHeart, FaTrash } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [wishlist, setWishlist] = useState([]);
-  const dispatch = useDispatch();
 
-  const cartItems = useSelector((state) => state.cart.cartItems);
+  const { cartItems, addToCart, removeFromCart, increaseQty, decreaseQty } =
+    useCart();
 
   useEffect(() => {
     fetch("https://fakestoreapi.com/products")
@@ -52,9 +51,9 @@ const Products = () => {
 
           return (
             <div key={product.id} className="border rounded-lg p-4 shadow hover:shadow-lg transition">
-
               <img src={product.image} alt={product.title} className="h-40 mx-auto object-contain" />
-   <button
+
+              <button
                 onClick={() => toggleWishlist(product)}
                 className={`mt-2 text-xl ${
                   wishlist.some((item) => item.id === product.id)
@@ -64,16 +63,14 @@ const Products = () => {
               >
                 <FaHeart />
               </button>
+
               <h3 className="text-sm font-semibold mt-2 line-clamp-2">{product.title}</h3>
 
               <p className="font-bold text-lg mt-1">${product.price}</p>
 
-             
-           
-
               {!inCart && (
                 <button
-                  onClick={() => dispatch(addToCart(product))}
+                  onClick={() => addToCart(product)}
                   className="w-full mt-4 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600"
                 >
                   ADD TO CART
@@ -82,27 +79,24 @@ const Products = () => {
 
               {inCart && (
                 <div className="flex items-center justify-between mt-4 bg-gray-100 p-2 rounded-lg">
-
                   <button
-                    onClick={() => dispatch(decreaseQty(product.id))}
+                    onClick={() => decreaseQty(product.id)}
                     className="px-3 py-1 bg-gray-300 rounded"
                   >
                     -
                   </button>
 
-                 
                   <span className="font-semibold text-lg">{inCart.quantity}</span>
 
-                 
                   <button
-                    onClick={() => dispatch(increaseQty(product.id))}
+                    onClick={() => increaseQty(product.id)}
                     className="px-3 py-1 bg-gray-300 rounded"
                   >
                     +
                   </button>
 
                   <button
-                    onClick={() => dispatch(removeFromCart(product.id))}
+                    onClick={() => removeFromCart(product.id)}
                     className="text-red-500 text-xl ml-2"
                   >
                     <FaTrash />
